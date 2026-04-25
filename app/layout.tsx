@@ -28,6 +28,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
        suppressHydrationWarning={true}
        data-lt-installed="true"
+       cz-shortcut-listen="true"
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
