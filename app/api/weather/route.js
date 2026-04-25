@@ -23,7 +23,7 @@ export async function GET() {
 
         const result = sessionDates.map((sDate, index) => {
             const targetStr = sDate.toDateString();
-            const forecast = data.list.find((entry: any) => {
+            const forecast = data.list.find((entry) => {
                 const entryDate = new Date(entry.dt * 1000);
                 return entryDate.toDateString() === targetStr && entryDate.getHours() >= 15;
             });
