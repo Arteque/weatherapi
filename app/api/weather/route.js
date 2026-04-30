@@ -23,12 +23,7 @@ export async function GET() {
 
     const result = sessionDates
       .map((sDate, index) => {
-        const now = new Date().toLocaleDateString(document.head.lang || "en-US", {
-          weekday: "numeric",
-          day: "numeric",
-          month: "numeric",
-          year:"numeric"
-        });
+        const now = new Date()
         const targetStr = sDate.toDateString();
         const forecast = data.list.find((entry) => {
           const entryDate = new Date(entry.dt * 1000);
