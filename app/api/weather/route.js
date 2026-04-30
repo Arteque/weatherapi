@@ -24,9 +24,9 @@ export async function GET() {
     const result = sessionDates
       .map((sDate, index) => {
         const now = new Date().toLocaleDateString(document.head.lang || "en-US", {
-          weekday: "2-digit",
+          weekday: "numeric",
           day: "numeric",
-          month: "2-digit",
+          month: "numeric",
           year:"numeric"
         });
         const targetStr = sDate.toDateString();
