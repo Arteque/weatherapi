@@ -16,14 +16,22 @@ export async function GET() {
   }
 
   try {
+    // Fetch forecast data for sessions
     const response = await fetch(
       `https://api.openweathermap.org/data/2.5/forecast?lat=${LAT}&lon=${LON}&units=metric&appid=${API_KEY}`,
     );
     const data = await response.json();
 
-    const result = sessionDates
+    // Fetch current weather data
+    const currentRes = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?lat=${LAT}&lon=${LON}&units=metric&appid=${API_KEY}`
+    );
+    const current = await currentRes.json();
+
+    // Build session forecasts
+    const sessions = sessionDates
       .map((sDate, index) => {
-        const now = new Date()
+        const now = new Date();
         const targetStr = sDate.toDateString();
         const forecast = data.list.find((entry) => {
           const entryDate = new Date(entry.dt * 1000);
@@ -31,12 +39,7 @@ export async function GET() {
             entryDate.toDateString() === targetStr && entryDate.getHours() >= 15
           );
         });
-
         if (!forecast) return null;
-
-
-
-
         return {
           session: index + 1,
           now: now,
@@ -45,7 +48,7 @@ export async function GET() {
           weather: {
             temp: Math.round(forecast.main.temp),
             condition: forecast.weather[0].description,
-            icon_class: "fa-" + forecast.weather[0].main.toLowerCase(), // Simplified for example
+            icon_class: "fa-" + forecast.weather[0].main.toLowerCase(),
             wind: {
               speed_kmh: (forecast.wind.speed * 3.6).toFixed(1),
               direction: ["N", "NE", "E", "SE", "S", "SW", "W", "NW"][
@@ -57,7 +60,24 @@ export async function GET() {
       })
       .filter(Boolean);
 
-    return NextResponse.json(result);
+    // Build current weather section
+    const currentWeather = {
+      time: new Date(),
+      temp: Math.round(current.main.temp),
+      condition: current.weather[0].description,
+      icon_class: "fa-" + current.weather[0].main.toLowerCase(),
+      wind: {
+        speed_kmh: (current.wind.speed * 3.6).toFixed(1),
+        direction: ["N", "NE", "E", "SE", "S", "SW", "W", "NW"][
+          Math.round(current.wind.deg / 45) % 8
+        ],
+      },
+    };
+
+    return NextResponse.json({
+      current: currentWeather,
+      sessions,
+    });
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch" }, { status: 500 });
   }
