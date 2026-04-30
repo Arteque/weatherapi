@@ -21,6 +21,11 @@ export async function GET() {
         );
         const data = await response.json();
 
+        if(!data) {
+            return NextResponse.json({ error: "No data received" }, { status: 500 });
+        }
+
+        console.log("Received data:", data); // Debugging log
         const result = sessionDates.map((sDate, index) => {
             const targetStr = sDate.toDateString();
             const forecast = data.list.find((entry) => {
