@@ -23,6 +23,7 @@ export async function GET() {
 
     const result = sessionDates
       .map((sDate, index) => {
+        const now = new Date().toLocaleDateString();
         const targetStr = sDate.toDateString();
         const forecast = data.list.find((entry) => {
           const entryDate = new Date(entry.dt * 1000);
@@ -33,16 +34,12 @@ export async function GET() {
 
         if (!forecast) return null;
 
-        if (!data) {
-          return NextResponse.json(
-            { error: "No data received" },
-            { status: 500 },
-          );
-          console.log("Received data:", data); // Debugging log
-        }
+
+
 
         return {
           session: index + 1,
+          now: now,
           date: targetStr,
           training_time: "17:00",
           weather: {
